@@ -82,4 +82,21 @@ class MemberJPARepositoryTest {
         assertThat(result.get(1).getAge()).isEqualTo(30);
         assertThat(result.size()).isEqualTo(2);
     }
+    // namedQuery 테스트
+    @Test
+    public void namedQueryTest() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("AAA", 20);
+        Member m3 = new Member("AAA", 30);
+        memberJPARepository.save(m1);
+        memberJPARepository.save(m2);
+        memberJPARepository.save(m3);
+
+        // when
+        List<Member> result = memberJPARepository.findByUsername("AAA");
+
+        // then
+        assertThat(result.get(1).getAge()).isEqualTo(20);
+    }
 }

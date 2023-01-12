@@ -8,6 +8,10 @@ import javax.persistence.*;
 @Getter @Setter // 세터 없애고 생성자와 메소드를 활용 // 하지만 공부를 위해 세터를 열어둔다.
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA는 스펙상 기본생성자가 있어야함.
 @ToString(of = {"id", "username", "age"}) // team을 걸면 무한루프에 빠짐
+@NamedQuery(
+        name = "Member.findByUsername",
+        query = "select m from Member m where m.username = :username"
+)
 public class Member {
     @Id
     @GeneratedValue

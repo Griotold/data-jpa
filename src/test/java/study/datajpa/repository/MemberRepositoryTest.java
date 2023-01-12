@@ -81,4 +81,22 @@ class MemberRepositoryTest {
         assertThat(result.get(1).getAge()).isEqualTo(30);
         assertThat(result.size()).isEqualTo(2);
     }
+    // 스프링 데이터 JPA로 네임드쿼리
+    @Test
+    public void namedQueryTest() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("AAA", 20);
+        Member m3 = new Member("AAA", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        // when
+        List<Member> result = memberRepository.findByUsername("AAA");
+
+        // then
+
+        assertThat(result.get(1).getAge()).isEqualTo(20);
+    }
 }
