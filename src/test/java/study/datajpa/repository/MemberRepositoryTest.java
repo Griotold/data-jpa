@@ -99,4 +99,22 @@ class MemberRepositoryTest {
 
         assertThat(result.get(1).getAge()).isEqualTo(20);
     }
+    // 리파지터리 메소드에 쿼리 정의하기
+    @Test
+    public void 리파지터리_메소드에_쿼리_직접() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("AAA", 20);
+        Member m3 = new Member("AAA", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        // when
+        List<Member> result = memberRepository.findMember("AAA", 20);
+
+        // then
+
+        assertThat(result.get(0)).isEqualTo(m2);
+    }
 }
