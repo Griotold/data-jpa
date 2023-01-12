@@ -63,4 +63,22 @@ class MemberRepositoryTest {
         // then
     }
 
+    @Test
+    public void 이름_나이_스프링_데이터_JPA() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("AAA", 20);
+        Member m3 = new Member("AAA", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        // when
+        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("AAA", 15);
+        // then
+        assertThat(result.get(0).getUsername()).isEqualTo("AAA");
+        assertThat(result.get(0).getAge()).isEqualTo(20);
+        assertThat(result.get(1).getAge()).isEqualTo(30);
+        assertThat(result.size()).isEqualTo(2);
+    }
 }

@@ -64,4 +64,22 @@ class MemberJPARepositoryTest {
 
         // then
     }
+    @Test
+    public void 이름_나이() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("AAA", 20);
+        Member m3 = new Member("AAA", 30);
+        memberJPARepository.save(m1);
+        memberJPARepository.save(m2);
+        memberJPARepository.save(m3);
+
+       // when
+        List<Member> result = memberJPARepository.findByusernameAndAgeGreaterThan("AAA", 15);
+        // then
+        assertThat(result.get(0).getUsername()).isEqualTo("AAA");
+        assertThat(result.get(0).getAge()).isEqualTo(20);
+        assertThat(result.get(1).getAge()).isEqualTo(30);
+        assertThat(result.size()).isEqualTo(2);
+    }
 }
