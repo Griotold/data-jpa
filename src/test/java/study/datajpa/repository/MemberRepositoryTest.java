@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
+import study.datajpa.entity.Team;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Rollback(value = false)
 class MemberRepositoryTest {
     @Autowired MemberRepository memberRepository;
+    @Autowired TeamRepository teamRepository;
 
     @Test
     public void testMember() {
@@ -116,5 +119,45 @@ class MemberRepositoryTest {
         // then
 
         assertThat(result.get(0)).isEqualTo(m2);
+    }
+
+    // @Query로 값 가져오기
+    @Test
+    public void 값_가져오기() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        Member m3 = new Member("CCC", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        // when
+        List<String> usernameList = memberRepository.findUsernameList();
+
+        // then
+        assertThat(usernameList.get(0)).isEqualTo("AAA");
+        assertThat(usernameList.get(1)).isEqualTo("BBB");
+        assertThat(usernameList.get(2)).isEqualTo("CCC");
+    }
+
+    // @Query로 MemberDto 가져오기
+    @Test
+    public void memberDto_가져오기()throws Exception {
+        // given
+        Team t1 = new Team("team1");
+        teamRepository.save(t1);
+
+        Member m1 = new Member("member1", 10);
+        m1.changeTeam(t1);
+        memberRepository.save(m1);
+
+        // when
+        List<MemberDto> memberDto = memberRepository.findMemberDto();
+
+        // then
+        assertThat(memberDto.get(0).getTeamName()).isEqualTo(t1.getName());
+        assertThat(memberDto.get(0).getUsername()).isEqualTo("member1");
+        assertThat(memberDto.get(0).getId()).isEqualTo(m1.getId());
     }
 }
