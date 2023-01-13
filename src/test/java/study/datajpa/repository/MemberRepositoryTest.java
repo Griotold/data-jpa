@@ -10,6 +10,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -159,5 +161,24 @@ class MemberRepositoryTest {
         assertThat(memberDto.get(0).getTeamName()).isEqualTo(t1.getName());
         assertThat(memberDto.get(0).getUsername()).isEqualTo("member1");
         assertThat(memberDto.get(0).getId()).isEqualTo(m1.getId());
+    }
+    // 컬렉션 파라미터 바인딩
+    @Test
+    public void 컬렉션_파라미터_바인딩()throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        Member m3 = new Member("CCC", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        // when
+        List<Member> members = memberRepository.findByNames(Arrays.asList("AAA", "BBB", "CCC"));
+
+        // then
+        assertThat(members.get(0)).isEqualTo(m1);
+        assertThat(members.get(1)).isEqualTo(m2);
+        assertThat(members.get(2)).isEqualTo(m3);
     }
 }
