@@ -181,4 +181,40 @@ class MemberRepositoryTest {
         assertThat(members.get(1)).isEqualTo(m2);
         assertThat(members.get(2)).isEqualTo(m3);
     }
+    // 반환 타입
+    @Test
+    public void 반환_타입() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        Member m3 = new Member("CCC", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+        
+        // when
+        List<Member> result = memberRepository.findListByUsername("fwefwefwafwfgwwb");
+        
+        // then
+        System.out.println("result.size() = " + result.size());
+    }
+    // 반환타입 - 단건 조회일 때 파라미터가 이상하면 null
+    @Test
+    public void 반환_타입_2() throws Exception {
+        // given
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+        Member m3 = new Member("CCC", 30);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        memberRepository.save(m3);
+
+        // when
+        Member findMember = memberRepository.findMemberByUsername("wfwefwefewf");
+        Optional<Member> findOptionalMember = memberRepository.findOptionalByUsername("wfwefewfw");
+
+        // then
+        assertThat(findMember).isNull();
+        System.out.println("findOptionalMember = " + findOptionalMember);
+    }
 }
