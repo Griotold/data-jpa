@@ -4,6 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -217,4 +222,62 @@ class MemberRepositoryTest {
         assertThat(findMember).isNull();
         System.out.println("findOptionalMember = " + findOptionalMember);
     }
+    
+    // 스프링 데이터 JPA 페이징과 정렬 검증
+    @Test
+    public void 페이징_스프링_데이터_JPA() throws Exception {
+        // given
+        memberRepository.save(new Member("m1", 10));
+        memberRepository.save(new Member("m2", 10));
+        memberRepository.save(new Member("m3", 10));
+        memberRepository.save(new Member("m4", 10));
+        memberRepository.save(new Member("m5", 10));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // when
+        Page<Member> page = memberRepository.findByAge(age, pageRequest); // 반환타입이 Page이면, totalCount까지 같이 가져옴
+
+        Page<MemberDto> MemberDtos = page.map(member -> new MemberDto(member.getId(), member.getUsername(), null));
+        // then
+
+
+        assertThat(page.getTotalElements()).isEqualTo(5); // totalCount
+        assertThat(page.getNumber()).isEqualTo(0); // 페이지 번호
+        assertThat(page.getTotalPages()).isEqualTo(2); // 전체 페이지 개수
+        assertThat(page.isFirst()).isTrue(); // 첫 페이지인가?
+        assertThat(page.hasNext()).isTrue(); // 다음 페이지가 있는가?
+        assertThat(page.isLast()).isFalse(); // 마지막 페이지인가?
+    }
+
+    // slice : limit + 1
+    @Test
+    public void slice_check() throws Exception {
+        // given
+        memberRepository.save(new Member("m1", 10));
+        memberRepository.save(new Member("m2", 10));
+        memberRepository.save(new Member("m3", 10));
+        memberRepository.save(new Member("m4", 10));
+        memberRepository.save(new Member("m5", 10));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // when
+        Slice<Member> page = memberRepository.findByAge(age, pageRequest); // 반환타입이 Page이면, totalCount까지 같이 가져옴
+//        long totalCount = memberRepository.totalCount(age);
+
+        // then
+        List<Member> content = page.getContent();
+
+        assertThat(content.size()).isEqualTo(3);
+//        assertThat(page.getTotalElements()).isEqualTo(5); // totalCount
+        assertThat(page.getNumber()).isEqualTo(0); // 페이지 번호
+//        assertThat(page.getTotalPages()).isEqualTo(2); // 전체 페이지 개수
+        assertThat(page.isFirst()).isTrue(); // 첫 페이지인가?
+        assertThat(page.hasNext()).isTrue(); // 다음 페이지가 있는가?
+        assertThat(page.isLast()).isFalse(); // 마지막 페이지인가?
+    }
+
 }
