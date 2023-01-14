@@ -52,4 +52,22 @@ public class MemberJPARepository {
                 .setParameter("username", username)
                 .getResultList();
     }
+    /**
+     * 순수 JPA 페이징과 정렬
+     * */
+    // offset : 몇 번쨰 부터 // limit : 몇 개를 가져와
+    public List<Member> findByPage(int age, int offset, int limit){
+        return em.createQuery("select m from Member m where m.age = :age order by m.username desc")
+                .setParameter("age", age)
+                .setFirstResult(offset) // 몇 번째 부터
+                .setMaxResults(limit) // 몇 개를 가져올건데
+                .getResultList();
+    }
+    // Total count는 보통 세트로 가져온다.
+    // 여기에는 sorting condition, 즉 order by desc가 없다. 필요가 없으니 뺴줬고 성능 최적화
+    public long totlaCount(int age){
+        return em.createQuery("select count(m) from Member m where m.age = :age", Long.class)
+                .setParameter("age", age)
+                .getSingleResult();
+    }
 }

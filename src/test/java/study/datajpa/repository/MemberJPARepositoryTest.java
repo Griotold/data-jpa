@@ -99,4 +99,32 @@ class MemberJPARepositoryTest {
         // then
         assertThat(result.get(1).getAge()).isEqualTo(20);
     }
+
+    // 순수 JPA 페이징 검증
+    @Test
+    public void 페이징_순수_JPA() throws Exception {
+        // given
+        memberJPARepository.save(new Member("m1", 10));
+        memberJPARepository.save(new Member("m2", 10));
+        memberJPARepository.save(new Member("m3", 10));
+        memberJPARepository.save(new Member("m4", 10));
+        memberJPARepository.save(new Member("m5", 10));
+
+        int age = 10;
+        int offset = 0;
+        int limit = 3;
+
+        // when
+        List<Member> members = memberJPARepository.findByPage(age, offset, limit);
+        long totalCount = memberJPARepository.totlaCount(age);
+
+        // 페이징 계산 공식...
+        // totalPage = totalCount / size ...
+        // 마지막 페이지...
+        // 최초 페이지...
+
+        // then
+        assertThat(members.size()).isEqualTo(3);
+        assertThat(totalCount).isEqualTo(5);
+    }
 }
