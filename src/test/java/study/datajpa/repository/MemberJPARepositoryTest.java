@@ -127,4 +127,21 @@ class MemberJPARepositoryTest {
         assertThat(members.size()).isEqualTo(3);
         assertThat(totalCount).isEqualTo(5);
     }
+
+    // 벌크성 수정 쿼리 순수 JPA로 구현 검증
+    @Test
+    public void 벌크_수정_순수_JPA() throws Exception {
+        // given
+        memberJPARepository.save(new Member("m1", 10));
+        memberJPARepository.save(new Member("m2", 19));
+        memberJPARepository.save(new Member("m3", 20));
+        memberJPARepository.save(new Member("m4", 21));
+        memberJPARepository.save(new Member("m5", 40));
+
+        // when
+        int resultCount = memberJPARepository.bulkAgePlus(20);
+
+        // then
+        assertThat(resultCount).isEqualTo(3);
+    }
 }

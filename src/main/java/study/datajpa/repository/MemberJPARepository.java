@@ -70,4 +70,17 @@ public class MemberJPARepository {
                 .setParameter("age", age)
                 .getSingleResult();
     }
+    /**
+     * 벌크성 수정 쿼리
+     * 순수 JPA로 구현
+     *
+     * */
+    // age보다 크거나 같은 애들의 age를 +1
+    public int bulkAgePlus(int age){
+        int resultCount = em.createQuery("update Member m set m.age = m.age + 1" +
+                        " where m.age >= :age")
+                .setParameter("age", age)
+                .executeUpdate(); // 업데이트 쿼리 날릴 때 // 리턴타입은 int
+        return resultCount;
+    }
 }

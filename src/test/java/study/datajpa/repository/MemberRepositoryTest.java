@@ -15,6 +15,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberRepositoryTest {
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void testMember() {
@@ -278,6 +282,29 @@ class MemberRepositoryTest {
         assertThat(page.isFirst()).isTrue(); // 첫 페이지인가?
         assertThat(page.hasNext()).isTrue(); // 다음 페이지가 있는가?
         assertThat(page.isLast()).isFalse(); // 마지막 페이지인가?
+    }
+    // 벌크성 수정 쿼리 with 스프링 데이터 JPA
+    // Best Practice : 벌크 연산 이후 영속성 컨텍스트를 비워줘야 한다.
+    @Test
+    public void 벌크_수정_스프링_데이터_JPA() throws Exception {
+        // given
+        memberRepository.save(new Member("m1", 10));
+        memberRepository.save(new Member("m2", 19));
+        memberRepository.save(new Member("m3", 20));
+        memberRepository.save(new Member("m4", 21));
+        memberRepository.save(new Member("m5", 40));
+
+        // when
+        int resultCount = memberRepository.bulkAgePlus(20);
+//        em.flush(); // 혹시 남아 있는 쿼리 날려주기
+//        em.clear(); // 영속성 컨텍스트 비우기
+
+        List<Member> result = memberRepository.findByUsername("m5");
+        Member member = result.get(0);
+        System.out.println("member = " + member); // 얘는 40살일까 41살일까?
+
+        // then
+        assertThat(resultCount).isEqualTo(3);
     }
 
 }
