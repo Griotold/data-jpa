@@ -307,4 +307,36 @@ class MemberRepositoryTest {
         assertThat(resultCount).isEqualTo(3);
     }
 
+    // 엔티티 그래프 실습
+    // 페치 조인 적용
+    @Test
+    public void findMemberLazy() throws Exception {
+        // given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+        Member m1 = new Member("m1", 10, teamA);
+        Member m2 = new Member("m2", 10, teamB);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        em.flush();
+        em.clear();
+
+        // when N + 1 문제
+        // select Member -> 1의 해당
+//        List<Member> all = memberRepository.findMemberFetchJoin();
+        List<Member> all = memberRepository.findAll();
+
+        for (Member member : all) {
+            System.out.println("member.getUsername() = " + member.getUsername());
+            System.out.println("member.getTeam().getClass() = " + member.getTeam().getClass());
+            // select Team -> N의 해당
+            System.out.println("member.getTeam().getName() = " + member.getTeam().getName());
+        }
+
+        // then
+    }
+
 }
