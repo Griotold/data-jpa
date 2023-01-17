@@ -339,4 +339,42 @@ class MemberRepositoryTest {
         // then
     }
 
+    // 쿼리 힌트 실습
+    @Test
+    public void queryHint() throws Exception {
+        // given
+        Member member = new Member("m1", 10);
+        memberRepository.save(member);
+
+        em.flush();
+        em.clear();
+
+        List<Member> memberList = memberRepository.findReadOnlyByUsername("m1");
+        Member findMember = memberList.get(0);
+        findMember.changeUserName("m2");
+        
+        em.flush(); // 변경 감지
+
+        // when
+
+        // then
+    }
+
+    // Lock 실습
+    @Test
+    public void lock() throws Exception {
+        // given
+        Member member = new Member("m1", 10);
+        memberRepository.save(member);
+
+        em.flush();
+        em.clear();
+
+        List<Member> m1 = memberRepository.findLockByUsername("m1");
+        // 쿼리 결과 확인하기
+
+        // when
+
+        // then
+    }
 }
