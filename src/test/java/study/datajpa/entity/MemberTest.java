@@ -1,9 +1,11 @@
 package study.datajpa.entity;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import study.datajpa.repository.MemberRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +20,9 @@ class MemberTest {
 
     @PersistenceContext
     EntityManager em;
+    
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     public void testEntity()throws Exception {
@@ -46,5 +51,28 @@ class MemberTest {
             System.out.println("member.getTeam() = " + member.getTeam());
         }
         // then
+    }
+    
+    // Auditing test
+    @Test
+    public void auditing_test() throws Exception {
+        // given
+        Member member = new Member("member1");
+        memberRepository.save(member); // @PrePersist 실행
+        
+        Thread.sleep(100); // 잠깐 쉬고
+        member.changeUserName("member2");
+        
+        em.flush(); // @PreUpdate 실행
+        em.clear();
+        
+        // when
+        Member findMember = memberRepository.findById(member.getId()).get();
+        
+        // then
+        System.out.println("findMember.getCreatedDate() = " + findMember.getCreatedDate());
+        System.out.println("findMember.getLastModifiedDate() = " + findMember.getLastModifiedDate());
+        System.out.println("findMember.getCreatedBy() = " + findMember.getCreatedBy());
+        System.out.println("findMember.getLastModifiedBy() = " + findMember.getLastModifiedBy());
     }
 }
