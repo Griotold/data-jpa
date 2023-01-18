@@ -377,4 +377,14 @@ class MemberRepositoryTest {
 
         // then
     }
+
+    // 사용자 정의 리파지토리
+    @Test
+    public void callCustom() throws Exception {
+        // given
+        List<Member> memberCustom = memberRepository.findMemberCustom();
+        // when
+
+        // then
+    }
 }
