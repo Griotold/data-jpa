@@ -37,10 +37,10 @@ public class MemberController {
         Page<MemberDto> map = page.map(MemberDto::new);
         return map;
     }
-    @PostConstruct // 애플리케이션이 올라올 떄 이게 한번 실행됨.
-    public void init(){
-        for(int i = 0; i< 100; i++){
-            memberRepository.save(new Member("user" + i, i));
-        }
-    }
+//    @PostConstruct // 애플리케이션이 올라올 떄 이게 한번 실행됨.
+//    public void init(){
+//        for(int i = 0; i< 100; i++){
+//            memberRepository.save(new Member("user" + i, i));
+//        }
+//    }
 }
