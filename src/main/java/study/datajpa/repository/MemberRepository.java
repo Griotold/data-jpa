@@ -101,4 +101,17 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
      * Projections : username만 딱 가져오고 싶은 상황
      * */
     <T> List<T> findProjectionsByUsername(String username, Class<T> type);
+
+    /**
+     * 네이티브 쿼리
+     * */
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    Member findByNativeQuery(String username);
+
+    // Projections활용 - 네이티브 쿼리 // ANSI 표준 SQL 문법
+    @Query(value = "select m.member_id as id, m.username, t.name as teamName" +
+            " from member m left join team t ON m.team_id = t.team_id",
+            countQuery = "select coutn(*) from member",
+            nativeQuery = true)
+    Page<MemberProjection> findByNativeProjection(Pageable pageable);
 }

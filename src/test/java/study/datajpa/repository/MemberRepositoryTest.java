@@ -412,4 +412,30 @@ class MemberRepositoryTest {
 
         // then
     }
+
+    // 네이티브 쿼리 테스트
+    @Test
+    public void nativeQ() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        teamRepository.save(team1);
+
+        Member m1 = new Member("m1", 10, team1);
+        Member m2 = new Member("m2", 10, team1);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        em.flush();
+        em.clear();
+
+        // when
+        Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(0, 10));
+        List<MemberProjection> content = result.getContent();
+        for (MemberProjection memberProjection : content) {
+            System.out.println("memberProjection.getUsername() = " + memberProjection.getUsername());
+            System.out.println("memberProjection.getTeamName() = " + memberProjection.getTeamName());
+        }
+
+        // then
+    }
 }
