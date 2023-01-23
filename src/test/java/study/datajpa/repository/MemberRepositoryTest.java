@@ -12,6 +12,7 @@ import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
+import study.datajpa.dto.UsernameOnlyDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
@@ -384,6 +385,30 @@ class MemberRepositoryTest {
         // given
         List<Member> memberCustom = memberRepository.findMemberCustom();
         // when
+
+        // then
+    }
+    
+    // Projections
+    @Test
+    public void projections() throws Exception {
+        // given
+        Team team1 = new Team("team1");
+        teamRepository.save(team1);
+
+        Member m1 = new Member("m1", 10, team1);
+        Member m2 = new Member("m2", 10, team1);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        
+        em.flush();
+        em.clear();
+        
+        // when
+        List<NestedClosedProjection> result = memberRepository.findProjectionsByUsername("m1", NestedClosedProjection.class);
+        for (NestedClosedProjection nestedClosedProjection : result) {
+            System.out.println("nestedClosedProjection = " + nestedClosedProjection);
+        }
 
         // then
     }
